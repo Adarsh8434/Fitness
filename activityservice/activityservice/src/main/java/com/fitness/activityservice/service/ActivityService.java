@@ -7,6 +7,9 @@ import com.fitness.modal.Activity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ActivityService {
@@ -23,7 +26,7 @@ public class ActivityService {
               .build();
 
       Activity saveActivity = activityRepository.save(activity);
-      return mapToResponse(activity);
+      return mapToResponse(saveActivity);
 
     }
     private ActivityResponse mapToResponse (Activity activity){
@@ -33,12 +36,19 @@ public class ActivityService {
         response.setType(activity.getType());
         response.setDuration(activity.getDuration());
         response.setCaloriesBurned(activity.getCaloriesBurned());
-        response.setStartTime(response.getStartTime());
-        response.setAdditionalMetrics(response.getAdditionalMetrics());
+        response.setStartTime(activity.getStartTime());
+        response.setAdditionalMetrics(activity.getAdditionalMetrics());
         response.setCreatedAt(activity.getCreatedAt());
         response.setUpdatedAt(activity.getUpdatedAt());
 
         return response;
 
+    }
+
+    public List<ActivityResponse> getUserActivity(String userId) {
+       List<Activity> activities= activityRepository.findByUserId(userId);
+       return activities.stream()
+               .map(this:: mapToResponse)
+               .collect(Collectors.toList());
     }
 }
