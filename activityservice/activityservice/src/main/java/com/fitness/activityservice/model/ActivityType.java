@@ -1,4 +1,4 @@
-package com.fitness.modal;
+package com.fitness.activityservice.model;
 
 public enum ActivityType {
 
