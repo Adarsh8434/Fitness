@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 @Service
 @Slf4j
+
 @RequiredArgsConstructor
 public class UserValidationService {
 
