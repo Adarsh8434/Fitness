@@ -6,6 +6,9 @@ import com.fitness.activityservice.dto.ActivityResponse;
 import com.fitness.activityservice.model.Activity;
 import com.mongodb.client.MongoClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +33,7 @@ public class ActivityService {
               .additionalMetrics(request.getAdditionalMetrics())
               .build();
         System.out.println("Database Name = " + mongoTemplate.getDb().getName());
-        MongoClient mongoClient = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase();
+        System.out.println("URI = " + mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName());
 //        System.out.println(mongoTemplate.getDb().getMongoClient());
       Activity saveActivity = activityRepository.save(activity);
 //        Activity saveActivity = activityRepository.save(activity);
@@ -39,6 +42,28 @@ public class ActivityService {
         System.out.println("Saved Activity ID = " + saveActivity.getId());
       return mapToResponse(saveActivity);
 
+    }
+    @Bean
+    CommandLineRunner configCheck(Environment env) {
+        return args -> {
+            System.out.println("Mongo URI = "
+                    + env.getProperty("spring.data.mongodb.uri"));
+
+            System.out.println("Mongo DB = "
+                    + env.getProperty("spring.data.mongodb.database"));
+        };
+    }
+    @Bean
+    CommandLineRunner verifyMongo(MongoTemplate mongoTemplate) {
+        return args -> {
+            System.out.println("Actual DB = " +
+                    mongoTemplate.getMongoDatabaseFactory()
+                            .getMongoDatabase()
+                            .getName());
+            System.out.println("Activity Count = " +
+                    mongoTemplate.getCollection("activities")
+                            .countDocuments());
+        };
     }
     private ActivityResponse mapToResponse (Activity activity){
         ActivityResponse response=new ActivityResponse();
