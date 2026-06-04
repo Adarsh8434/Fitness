@@ -20,6 +20,7 @@ public class RecommendationService {
 
 
     public List<Recommendation> getUserRecommendation(String userId) {
+        System.out.println(userId);
     return  recommendationRepository.findByUserId(userId);
     }
 
