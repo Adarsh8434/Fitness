@@ -15,9 +15,12 @@ import org.springframework.stereotype.Service;
 
 public class ActivityMessageListener {
 
-
+private final ActivityAIService activityAIService;
     @RabbitListener(queues ="activity.queue" )
   public void processActivity(Activity activity){
+        System.out.println("Received activity for processing"+activity.getId());
    log.info("Received activity for processing : {} ",activity.getId());
+   log.info("Generated Recommendation : {} ",activityAIService.generateRecommnedation(activity));
+   System.out.println("Generated Recommendation"+activityAIService.generateRecommnedation(activity));
   }
 }

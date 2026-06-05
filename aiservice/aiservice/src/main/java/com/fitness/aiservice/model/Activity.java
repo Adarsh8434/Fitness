@@ -10,12 +10,14 @@ public class Activity {
 
     private String id;
     private String userId;
+    private String Type;
     private Integer duration;
     private Integer caloriesBurned;
     private LocalDateTime startTime;
     private Map<String, Object> additionalMetrics;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 
 }
 
