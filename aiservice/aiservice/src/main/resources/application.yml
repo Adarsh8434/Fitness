@@ -20,11 +20,7 @@ rabbitmq:
     name: activity.queue
   routing:
     key: activity.tracking
-#
-#logging:
-#  level:
-#    root: DEBUG
-#    org.springframework.web: DEBUG
+
 gemini:
   api:
     url: ${GEMINI_API-URL}
