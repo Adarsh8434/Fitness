@@ -2,9 +2,12 @@ package com.fitness.aiservice.service;
 
 
 import com.fitness.aiservice.model.Activity;
+import com.fitness.aiservice.model.Recommendation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @Slf4j
@@ -13,10 +16,28 @@ public class ActivityAIService {
     private final GeminiService geminiService;
 
     public String generateRecommnedation(Activity activity){
-      String prompt = createPromptForActivity(activity);
-      String aiResponse=geminiService.getAnswer(prompt);
+        log.info(">>> Calling Gemini for activity: {}", activity.getId());
+        String prompt = createPromptForActivity(activity);
+        String aiResponse=geminiService.getAnswer(prompt);
       log.info("Response from AI : {}", aiResponse);
+      processAIResponse(activity,aiResponse);
       return aiResponse;
+    }
+    private void processAIResponse(Activity activity, String aiResponse){
+           try{
+               ObjectMapper mapper=new ObjectMapper();
+               JsonNode rootNode= rootNode.path("candidates")
+                       .get(0)
+                       .path("content")
+                       .path("parts")
+                       .get(0)
+                       .path("text");
+               String jsonContent = textNode.asText()
+                       .replaceAll("'''json\\n","")
+                       .replace;
+           }catch (Exception e){
+               e.printStackTrace();
+           }
     }
     private String createPromptForActivity(Activity activity) {
         return String.format("""

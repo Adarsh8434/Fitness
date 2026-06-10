@@ -20,8 +20,11 @@ rabbitmq:
     name: activity.queue
   routing:
     key: activity.tracking
+  listener:
+    simple:
+      default-requeue-rejected: false
 
 gemini:
   api:
-    url: ${GEMINI_API-URL}
+    url: ${GEMINI_API_URL}
     Key: ${GEMINI_API_KEY}
