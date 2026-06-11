@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import static java.lang.StringUTF16.trim;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -26,15 +28,18 @@ public class ActivityAIService {
     private void processAIResponse(Activity activity, String aiResponse){
            try{
                ObjectMapper mapper=new ObjectMapper();
-               JsonNode rootNode= rootNode.path("candidates")
+               JsonNode rootNode =mapper.readTree(aiResponse);
+               JsonNode textNode= rootNode.path("candidates")
                        .get(0)
                        .path("content")
                        .path("parts")
                        .get(0)
                        .path("text");
                String jsonContent = textNode.asText()
-                       .replaceAll("'''json\\n","")
-                       .replace;
+                       .replaceAll("```json\\n","")
+                       .replaceAll("\\n```","")
+                      .trim();
+               log.info("Parsed response from ai : {}",jsonContent);
            }catch (Exception e){
                e.printStackTrace();
            }
