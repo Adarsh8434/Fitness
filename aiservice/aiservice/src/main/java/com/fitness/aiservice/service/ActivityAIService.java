@@ -11,6 +11,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,13 +22,13 @@ import java.util.List;
 public class ActivityAIService {
     private final GeminiService geminiService;
 
-    public String generateRecommnedation(Activity activity){
+    public Recommendation generateRecommnedation(Activity activity){
         log.info(">>> Calling Gemini for activity: {}", activity.getId());
         String prompt = createPromptForActivity(activity);
         String aiResponse=geminiService.getAnswer(prompt);
       log.info("Response from AI : {}", aiResponse);
       processAIResponse(activity,aiResponse);
-      return aiResponse;
+      return processAIResponse(activity,aiResponse);
     }
     private Recommendation processAIResponse(Activity activity, String aiResponse){
            try{
@@ -56,7 +57,7 @@ public class ActivityAIService {
 
             List<String> improvements=extractImprovements(analysisJson.path("improvements"));
             List<String> suggestions=extractSuggestions(analysisJson.path("suggestions"));
-               List<String> safety=extractSafetyGuidelines(analysisJson.path("safety"));
+            List<String> safety=extractSafetyGuidelines(analysisJson.path("safety"));
 
            return Recommendation.builder().activityId(activity.getId())
                    .userId(activity.getUserId())
@@ -69,7 +70,26 @@ public class ActivityAIService {
                    .build();
            }catch (Exception e){
                e.printStackTrace();
+               return createDefaultRecommendation(activity);
            }
+    }
+
+    private Recommendation createDefaultRecommendation(Activity activity) {
+        return    Recommendation
+                .builder()
+                .userId(activity.getUserId())
+                .activityId(activity.getType())
+                .recommendation("Unable to generate detailed Analysis")
+                .improvements(Collections.singletonList("Continue with your current routine"))
+                .suggestions(Collections.singletonList("Consider consulting a fitness professional"))
+                .safety(Arrays.asList(
+                        "Always warm up before exercise",
+                        "Stay hydrated",
+                        "Listen to your body"
+
+                ))
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
     private List<String> extractSafetyGuidelines(JsonNode safetyNode) {
