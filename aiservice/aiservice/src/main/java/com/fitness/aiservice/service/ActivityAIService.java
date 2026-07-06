@@ -5,6 +5,7 @@ import com.fitness.aiservice.model.Activity;
 import com.fitness.aiservice.model.Recommendation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -22,7 +23,7 @@ import java.util.List;
 public class ActivityAIService {
     private final GeminiService geminiService;
 
-    public Recommendation generateRecommnedation(Activity activity){
+    public Recommendation generateRecommendation(Activity activity){
         log.info(">>> Calling Gemini for activity: {}", activity.getId());
         String prompt = createPromptForActivity(activity);
         String aiResponse=geminiService.getAnswer(prompt);

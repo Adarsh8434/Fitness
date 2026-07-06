@@ -23,7 +23,7 @@ private final RecommendationRepository recommendationRepository;
    log.info("Received activity for processing : {} ",activity.getId());
 //   log.info("Generated Recommendation : {} ",activityAIService.generateRecommnedation(activity));
         try {
-            Recommendation recommendation = activityAIService.generateRecommnedation(activity);
+            Recommendation recommendation = activityAIService.generateRecommendation(activity);
             recommendationRepository.save(recommendation);
             log.info("Generated Recommendation : {}", recommendation);
         } catch (Exception e) { 

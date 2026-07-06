@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class GeminiService {
 
-    @Value("${Gemini.api.url}")
+    @Value("${gemini.api.url}")
     private String geminiApiUrl;
 
-    @Value("${Gemini.api.key}")
+    @Value("${gemini.api.key}")
     private String geminiApiKey;
     private final WebClient webClient;
     private static final AtomicInteger counter = new AtomicInteger();
