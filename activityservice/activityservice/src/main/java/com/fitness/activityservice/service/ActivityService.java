@@ -75,4 +75,10 @@ public class ActivityService {
                .map(this:: mapToResponse)
                .collect(Collectors.toList());
     }
+
+    public ActivityResponse getActivity(String id) {
+        Activity activity=activityRepository.findFirstByUserId(id)
+                .orElseThrow(()->new RuntimeException("Activity not found with id "+ id));
+        return mapToResponse(activity);
+    }
 }

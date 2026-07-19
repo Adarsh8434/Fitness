@@ -34,6 +34,7 @@ public class GeminiService {
                            Map.of("text",question)
                 })
                 });
+        // This i had for debugging and find out why gemini response was not working
 //        System.out.println(
 //                "Gemini Request Count = "
 //                        + counter.incrementAndGet()

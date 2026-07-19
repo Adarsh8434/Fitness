@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/fitness_user_db
@@ -10,8 +13,6 @@ spring:
     ddl-auto : update
    database-platform: org.hibernate.dialect.PostgreSQLDialect
    show-sql: true
-server:
-  port: 8081
 
 eureka:
   client:
