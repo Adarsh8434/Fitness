@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
     @Autowired
-     private UserRepository userRepository;
+    private UserRepository userRepository;
     public UserResponse getUserProfile(String userId) {
-         User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
         UserResponse userResponse=new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setEmail(user.getEmail());
@@ -24,13 +24,21 @@ public class UserService {
         userResponse.setCreatedAt(user.getCreatedAt());
         userResponse.setUpdatedAt(user.getUpdatedAt());
         return userResponse;
-
-
     }
 
     public UserResponse register(RegisterRequest request) {
+        log.info("Register called");
+        log.info("Email: {}", request.getEmail());
+        log.info("KeycloakId: {}", request.getKeyCloakId());
        if(userRepository.existsByEmail(request.getEmail())) {
+
            User existingUser= userRepository.findByEmail(request.getEmail());
+           log.info("Existing user found");
+           log.info("DB KeycloakId: {}", existingUser.getKeyCloakId());
+           if (existingUser.getKeyCloakId() == null) {
+               existingUser.setKeyCloakId(request.getKeyCloakId());
+               userRepository.save(existingUser);
+           }
            UserResponse userResponse=new UserResponse();
            userResponse.setId(existingUser.getId());
            userResponse.setkeyCloakId(existingUser.getKeyCloakId());
@@ -40,14 +48,19 @@ public class UserService {
            userResponse.setLastName(existingUser.getLastName());
            userResponse.setCreatedAt(existingUser.getCreatedAt());
            userResponse.setUpdatedAt(existingUser.getUpdatedAt());
+
+           return userResponse;
        }
 
         User user=new User();
        user.setEmail(request.getEmail() );
-       user.setPassword(request.getPassword());
+       user.setKeyCloakId(request.getKeyCloakId());
+        user.setPassword(request.getPassword());
        user.setFirstName(request.getFirstName());
        user.setLastName(request.getLastName());
        User savedUser= userRepository.save(user);
+        log.info("Email: {}", request.getEmail());
+        log.info("KeycloakId: {}", request.getKeyCloakId());
         UserResponse userResponse=new UserResponse();
         userResponse.setkeyCloakId(savedUser.getKeyCloakId());
         userResponse.setId(savedUser.getId());
@@ -61,8 +74,8 @@ public class UserService {
 
     }
 
-    public Boolean existByUserId(String userId) {
+    public boolean existByUserId(String userId) {
         log.info("Calling user validation API for userId: {}"+ userId);
-        return userRepository.existsByKeycloakId(userId);
+        return userRepository.existsByKeyCloakId(userId);
     }
 }

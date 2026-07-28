@@ -22,14 +22,18 @@ public class KeycloakUserSyncFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange , WebFilterChain chain){
-      String userId=exchange.getRequest().getHeaders().getFirst("X-User-10");
-      String token=exchange.getRequest().getHeaders().getFirst("Authorization");
 
-      if(userId!= null && token!=null) return userService.validateUser(userId)
+      String token=exchange.getRequest().getHeaders().getFirst("Authorization");
+      String userId=exchange.getRequest().getHeaders().getFirst("X-User-Id");
+      RegisterRequest registerRequest=getUserDetails(token);
+     if(userId==null){
+         userId=registerRequest.getKeyCloakId();
+     }
+      if(userId!= null && token!=null) {
+          String finalUserId = userId;
+          return userService.validateUser(userId)
               .flatMap(exist->{
                 if(!exist) {
-                    //Register user
-                    RegisterRequest registerRequest=getUserDetails(token);
                     if(registerRequest!=null){
                         return userService.registerUser(registerRequest)
                                 .then(Mono.empty());
@@ -43,10 +47,12 @@ public class KeycloakUserSyncFilter implements WebFilter {
               .then(Mono.defer(()->{
                 ServerHttpRequest mutatedRequest = exchange.getRequest()
                         .mutate()
-                        .header("X-user-ID",userId)
+                        .header("X-user-Id", finalUserId)
                         .build();
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
               }));
+      }
+      log.info("checking ");
          return chain.filter(exchange);
 
     }

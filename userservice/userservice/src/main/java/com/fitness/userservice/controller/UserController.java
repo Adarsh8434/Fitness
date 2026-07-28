@@ -28,6 +28,7 @@ public class UserController {
 
     @GetMapping("/{userId}/validate")
     public ResponseEntity<Boolean> validateUser(@PathVariable String userId){
+        System.out.println("Coming request");
         return ResponseEntity.ok(userService.existByUserId(userId));
     }
 }
