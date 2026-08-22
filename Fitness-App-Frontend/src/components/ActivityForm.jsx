@@ -1,33 +1,37 @@
 import React from 'react'
-
-
-const ActivityForm = ({onActivityAdded }) => {
+import { useState } from 'react';
+import { addActivity } from '../services/api';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+const ActivityForm = ({ onActivityAdded }) => {
     const[activity, setActivity]= useState({type:"RUNNING",duration :'',caloriesBurned:'',
       additionalMetrics:{}
     });
 const handleSubmit = async (e)=>{
-    e.preventDefauilt();
+    e.preventDefault();
     try{
      await addActivity(activity);
      onActivityAdded();
-     setActivity({type:"RUNNING",duration :'.',caloriesBurned:''})
+     setActivity({type:"RUNNING",duration :'',caloriesBurned:'',
+      additionalMetrics: {}
+     });
     }catch(error){
-  
+      console.error('Error adding activity:', error);
     }
 }
     return (
           <Box component="form" onSubmit={handleSubmit} sx={{ mb:4 }}>
       This Box renders as an HTML section element.
-      <FormControl fullWidht sx={{mb: 2}}>
-        <InputLabel>Activity Type</InputLabel>
+      <FormControl fullWidth sx={{mb: 2}}>
+        {/* <InputLabel>Activity Type</InputLabel> */}
         <Select
         value={activity.type}
         onChange={(e)=> setActivity({...activity, type: e.target.value})}
-        ></Select>
+        >
         <MenuItem value="RUNNING">Running</MenuItem>
         <MenuItem value="CYCLING">Cycling</MenuItem>
         <MenuItem value="SWIMMING">Swimming</MenuItem>
         <MenuItem value="WALKING">WALKING</MenuItem>
+      </Select>
       </FormControl>
       <TextField fullWidth
                  label="Duration (minutes)"
@@ -45,12 +49,6 @@ const handleSubmit = async (e)=>{
       ></TextField>
       <Button type='submit' variant='contained'>  
         Add activity
-
-
-
-
-
-        
       </Button>
     </Box>
     )

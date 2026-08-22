@@ -8,14 +8,15 @@ import { useEffect, useState } from "react";
 import { setCredentials } from "./store/authSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentToken, selectCurrentUser } from "./store/authSlice";
-import { selectCurrentUserId } from "./store/authSlice";
 import ActivityForm from "./components/ActivityForm";
 import ActivityList from "./components/ActivityList";
 import Box from "@mui/material/Box";
 import ActivityDetail from "./components/ActivityDetail";
+import Typography from "@mui/material/Typography";
 const ActivitiesPage=()=>{
     return  (<Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-      <ActivityForm  onActivitiesAdded={()=> window.location.reload()}/>
+      
+      <ActivityForm  onActivityAdded ={()=> window.location.reload()}/>
       <ActivityList/>
       </Box>);
 }
@@ -33,15 +34,82 @@ useEffect(()=>{
   return (
     <Router>
      { !token?(
-      <Button variant="contained" color="blue" onClick={()=>{
-        logIn()
-      }}> LOGIN
-        </Button>):(
-          // <div>
-          //   <pre>{JSON.stringify(tokenData, null, 2)}</pre>
-          //    <pre>{JSON.stringify(token, null, 2)}</pre>
-          // </div>
+   <Box
+    sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: 2
+    }}
+>
+    <Box
+        sx={{
+            width: '100%',
+            maxWidth: 450,
+            backgroundColor: 'white',
+            borderRadius: 4,
+            padding: 5,
+            textAlign: 'center',
+            boxShadow: 6
+        }}
+    >
+        <Typography
+            variant="h3"
+            fontWeight="bold"
+            gutterBottom
+        >
+            🏋️ Fitness App
+        </Typography>
+
+        <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ mb: 2 }}
+        >
+            Welcome to your fitness journey!
+        </Typography>
+
+        <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ mb: 4 }}
+        >
+            Track your activities, monitor your progress,
+            and stay motivated to achieve your fitness goals.
+        </Typography>
+
+        <Button
+            variant="contained"
+            size="large"
+            fullWidth
+            onClick={logIn}
+            sx={{
+                py: 1.5,
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                borderRadius: 2
+            }}
+        >
+            Login to Access Your Activities
+        </Button>
+
+        <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 3 }}
+        >
+            Please login to access and manage your activities.
+        </Typography>
+    </Box>
+</Box>):(
+         
   <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+    <Button variant="contained" color="blue" onClick={()=>{
+        logOut()
+      }}> LOGOUT
+        </Button>
       <Routes>
           <Route path="/activities" element={<ActivitiesPage/>}/>
           <Route path="/activities/:id" element={<ActivityDetail/>}/>

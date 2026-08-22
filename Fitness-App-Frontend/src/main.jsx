@@ -12,7 +12,8 @@ import App from './App'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <AuthProvider authConfig={authConfig}>
-                loadingComponent={<div>Loading...</div>}
+                {/* loadingComponent=
+                {<div>Loading...</div>} */}
     <Provider store={store}>
       <App />
     </Provider>

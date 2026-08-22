@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
@@ -60,11 +61,26 @@ public class GeminiService {
                                 })
                 )
                 .bodyToMono(String.class)
+                .retryWhen(
+                        Retry.backoff(3, Duration.ofSeconds(2))
+                                .filter(this::isRetryable)
+                                .doBeforeRetry(signal ->
+                                        System.out.println("Retrying Gemini call, attempt: " + (signal.totalRetries() + 1)))
+                ) .onErrorResume(e -> {
+                    System.out.println("Gemini call failed after retries: " + e.getMessage());
+                    return Mono.just("Unable to generate detailed Analysis");
+                })
                 .block();
 
 
         return response;
 
+    }
+    private boolean isRetryable(Throwable throwable) {
+
+        return throwable.getMessage() != null &&
+                (throwable.getMessage().contains("UNAVAILABLE") ||
+                        throwable.getMessage().contains("RESOURCE_EXHAUSTED"));
     }
     }
 
